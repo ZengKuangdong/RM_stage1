@@ -2,6 +2,7 @@
 #include "io/buzzer/buzzer.hpp"
 
 sp::Buzzer buzzer(&htim4, TIM_CHANNEL_3, 84e6);
+extern uint8_t dbus_connected;  // 遥控器连接状态 0:未连接, 1:已连接
 
 extern "C" void buzzer_task(void * argument)
 {
@@ -18,6 +19,12 @@ extern "C" void buzzer_task(void * argument)
         osDelay(200);
         nums++;
       }
+      osDelay(1000);
     }
+  }
+  if (dbus_connected == 1) {
+    buzzer.set(440, 0.5);
+    dbus_connected = 0;
+    osDelay(1000);
   }
 }

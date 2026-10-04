@@ -52,6 +52,7 @@ osThreadId ledTaskHandle;
 osThreadId buzzerTaskHandle;
 osThreadId uartTaskHandle;
 osThreadId dbusTaskHandle;
+osThreadId imuTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -63,6 +64,7 @@ extern void led_task(void const * argument);
 extern void buzzer_task(void const * argument);
 extern void uart_task(void const * argument);
 extern void dbus_task(void const * argument);
+extern void imu_task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -128,6 +130,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of dbusTask */
   osThreadDef(dbusTask, dbus_task, osPriorityNormal, 0, 128);
   dbusTaskHandle = osThreadCreate(osThread(dbusTask), NULL);
+
+  /* definition and creation of imuTask */
+  osThreadDef(imuTask, imu_task, osPriorityIdle, 0, 128);
+  imuTaskHandle = osThreadCreate(osThread(imuTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
