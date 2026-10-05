@@ -31,7 +31,8 @@ extern "C" void buzzer_task()
       osDelay(1000);
       buzzer.stop();
     }
-    else if (!dbus_connected_buzzer && !remote.is_open() && nums >= 3) {  //断开连接
+    else if (
+      !dbus_connected_buzzer && !remote.is_alive(osKernelSysTick()) && nums >= 3) {  //断开连接
       buzzer.set(220, 0.5);
       osDelay(500);
       buzzer.set(110, 0.5);
