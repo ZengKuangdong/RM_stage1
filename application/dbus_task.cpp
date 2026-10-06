@@ -3,10 +3,10 @@
 
 sp::DBus remote(&huart3, false);
 
-extern "C" void dbus_task()
+extern "C" void dbus_task(void * argument)
 {
+  remote.request();
   while (1) {
-    remote.request();
     osDelay(10);
   }
 }
