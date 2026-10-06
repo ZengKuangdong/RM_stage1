@@ -8,7 +8,7 @@ const float r_ab[3][3] = {{0.0f, -1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 
 sp::BMI088 bmi088(&hspi1, GPIOA, GPIO_PIN_4, GPIOB, GPIO_PIN_0, r_ab);
 sp::Mahony imu(1e-3f);
 
-extern "C" void imu_task()
+extern "C" void imu_task(void *argument)
 {
   bmi088.init();
   while (true) {
