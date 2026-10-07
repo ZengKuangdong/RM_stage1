@@ -10,7 +10,7 @@
 
 constexpr uint8_t HIST_LEN = 15;        // 与 15ms 前比较
 constexpr float IMU_MOVE_TH = 0.02f;    // C板 15ms 净位移，约 0.11°（约 7.6°/s）
-constexpr float MOTOR_MOVE_TH = 20.0f;  // 电机 15ms 净位移，约 0.11°
+constexpr float MOTOR_MOVE_TH = 0.02f;  // 电机 15ms 净位移，约 0.11°
 constexpr float MANUAL_TH = 0.05f;      // 电机离开目标，约 3°
 constexpr float SETTLE_TH = 0.03f;      // 跟随电机到达目标的判定门槛
 constexpr uint8_t SOURCE_RELEASE_MS = 30;
@@ -38,12 +38,19 @@ sp::AngleUnwrapper yaw_unwapper;
 // sp::PID rm_motor_pid_angle2(0.001f, 0.5f, 0.0f, 0.0f, 1, 0.0f, 1.0f, false, true);
 // sp::PID rm_motor_pid_speed2(0.001f, 0.5f, 0.0f, 0.0f, 1, 0.0f, 1.0f, false, true);
 
+// // 角度环: rad → rad/s    调试的参数还算能看
+// sp::PID rm_motor_pid_angle1(0.001f, 2.0f, 2.0f, 0.0f, 1.5f, 1.5f, 1.0f, false, false);
+// sp::PID rm_motor_pid_angle2(0.001f, 2.0f, 2.0f, 0.0f, 1.5f, 1.5f, 1.0f, false, false);
+// // 速度环: rad/s → N·m
+// sp::PID rm_motor_pid_speed1(0.001f, 0.02f, 2.0f, 0.0f, 0.15f, 0.115f, 1.0f, false, false);
+// sp::PID rm_motor_pid_speed2(0.001f, 0.02f, 2.0f, 0.0f, 0.15f, 0.135f, 1.0f, false, false);
+
 // 角度环: rad → rad/s
-sp::PID rm_motor_pid_angle1(0.001f, 0.5f, 0.0f, 0.08f, 3.0f, 0.0f, 0.3f, false, false);
-sp::PID rm_motor_pid_angle2(0.001f, 0.5f, 0.0f, 0.08f, 3.0f, 0.0f, 0.3f, false, false);
+sp::PID rm_motor_pid_angle1(0.001f, 3.0f, 2.0f, 0.0f, 1.5f, 1.5f, 1.0f, false, false);
+sp::PID rm_motor_pid_angle2(0.001f, 3.0f, 2.0f, 0.0f, 1.5f, 1.5f, 1.0f, false, false);
 // 速度环: rad/s → N·m
-sp::PID rm_motor_pid_speed1(0.001f, 0.065f, 0.15f, 0.0f, 0.5f, 0.15f, 1.0f, false, false);
-sp::PID rm_motor_pid_speed2(0.001f, 0.065f, 0.15f, 0.0f, 0.5f, 0.15f, 1.0f, false, false);
+sp::PID rm_motor_pid_speed1(0.001f, 0.04f, 2.0f, 0.0f, 0.15f, 0.115f, 1.0f, false, false);
+sp::PID rm_motor_pid_speed2(0.001f, 0.04f, 2.0f, 0.0f, 0.15f, 0.135f, 1.0f, false, false);
 
 extern "C" void pid_control_clac(float set, uint8_t motor_id);
 extern "C" void pid_control_send();
@@ -51,9 +58,9 @@ extern "C" void hist_push(float a[], float b[], float c[], uint8_t len, float ya
 
 static float get_b_ratio(sp::DBusSwitchMode mode)
 {
-  if (mode == sp::DBusSwitchMode::DOWN) return 1.0f;  //0.5
-  if (mode == sp::DBusSwitchMode::MID) return 1.0f;   //-1
-  return 1.0f;                                        //3
+  if (mode == sp::DBusSwitchMode::DOWN) return 0.5f;  //0.5
+  if (mode == sp::DBusSwitchMode::MID) return -1.0f;  //-1
+  return 3.0f;                                        //3
 }
 
 static void disable_motors()
